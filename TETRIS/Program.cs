@@ -95,6 +95,17 @@ class Teto {
         B[2] = B[1];
 
     }
+    static void MyInitVar() {
+        Fall = 0;
+        Side = 6;
+        GameOverFlag = 0;
+        BlockFlag = 0;
+    }
+    static void MyInitVar2() {
+        Fall = 0;
+        Side = 6;
+        BlockFlag = 0;
+    }
     static void MyMakeBlock() {
         Random rnd = new Random();
         int x, y;
@@ -107,83 +118,6 @@ class Teto {
             }
             BlockFlag = 1;
         }
-    }
-    static void MyMakeField() {
-        int i, j, x, y;
-        for (y = 0; y < BHEIGHT; y++) {
-            for (x = 0; x < BWIDTH; x++) {
-                Field[y + Fall, x + Side] = Block[y, x];
-            }
-        }
-        for (i = 0; i < HEIGHT; i++) {
-            for (j = 0; j < WIDTH; j++) {
-                Field[i, j] += Stage[i, j];
-            }
-        }
-    }
-    static void MyInitVar() {
-        Fall = 0;
-        Side = 6;
-        GameOverFlag = 0;
-        BlockFlag = 0;
-    }
-    static void MyInitField() {
-        int i, j;
-        for (i = 0; i < HEIGHT; i++) {
-            for (j = 0; j < WIDTH; j++) {
-                Field[i, 0] = 9;
-                Field[i, 1] = 9;
-                Field[i, 2] = 9;
-                Field[21, j] = 9;
-                Field[22, j] = 9;
-                Field[i, 14] = 9;
-                Field[i, 15] = 9;
-                Field[20, j] = 9;
-                Field[i, 13] = 9;
-            }
-        }
-    }
-    static void MyDrawField() {
-        int i, j;
-        Console.Clear();
-        for (i = 0; i < HEIGHT - 2; i++) {
-            for (j = 2; j < WIDTH - 2; j++) {
-                Console.Write(B[Field[i, j]]);
-            }
-            Console.Write("\n");
-        }
-    }
-    static void MyClearField() {
-        int i, j;
-        for (i = 0; i < HEIGHT; i++) {
-            for (j = 0; j < WIDTH; j++) {
-                Field[i, j] = 0;
-            }
-        }
-    }
-    static void MyMakeCollisitonField() {
-        int i, j;
-        for (i = 0; i < HEIGHT; i++) {
-            for (j = 0; j < WIDTH; j++) {
-                CollisionField[i, j] = Stage[i, j];
-                CollisionField[i, 0] = 9;
-                CollisionField[i, 1] = 9;
-                CollisionField[i, 2] = 9;
-                CollisionField[21, j] = 9;
-                CollisionField[22, j] = 9;
-                CollisionField[i, 14] = 9;
-                CollisionField[i, 15] = 9;
-                CollisionField[20, j] = 9;
-                CollisionField[i, 13] = 9;
-            }
-        }
-    }
-    static void MyHandler(object userState) {
-        Input = Console.ReadKey().Key;
-        KeyRead = true;
-    }
-    static void InitInput() {
-        KeyRead = false;
     }
     static void MyGetKey() {
         int x, y;
@@ -224,6 +158,96 @@ class Teto {
             MyTurnRight();
         }
     }
+    static void MyHandler(object userState) {
+        Input = Console.ReadKey().Key;
+        KeyRead = true;
+    }
+    static void InitInput() {
+        KeyRead = false;
+    }
+    static void MyMakeField() {
+        int i, j, x, y;
+        for (y = 0; y < BHEIGHT; y++) {
+            for (x = 0; x < BWIDTH; x++) {
+                Field[y + Fall, x + Side] = Block[y, x];
+            }
+        }
+        for (i = 0; i < HEIGHT; i++) {
+            for (j = 0; j < WIDTH; j++) {
+                Field[i, j] += Stage[i, j];
+            }
+        }
+    }
+    static void MyInitField() {
+        int i, j;
+        for (i = 0; i < HEIGHT; i++) {
+            for (j = 0; j < WIDTH; j++) {
+                Field[i, 0] = 9;
+                Field[i, 1] = 9;
+                Field[i, 2] = 9;
+                Field[21, j] = 9;
+                Field[22, j] = 9;
+                Field[i, 14] = 9;
+                Field[i, 15] = 9;
+                Field[20, j] = 9;
+                Field[i, 13] = 9;
+            }
+        }
+    }
+    static void MyFreezeBlock() {
+        int x, y;
+        int freezeFlag = 0;
+        MyMakeCollisitonField();
+        for (y = 0; y < BHEIGHT; y++) {
+            for (x = 0; x < BWIDTH; x++) {
+                if (Block[y, x] != 0) {
+                    if (CollisionField[Fall + y + 1, Side + x] != 0) {
+                        freezeFlag++;
+                    }
+                }
+            }
+        }
+        if (freezeFlag != 0) {
+            MySearchLine();
+            MySaveField();
+            MyInitVar2();
+        }
+    }
+    static void MyDrawField() {
+        int i, j;
+        Console.Clear();
+        for (i = 0; i < HEIGHT - 2; i++) {
+            for (j = 2; j < WIDTH - 2; j++) {
+                Console.Write(B[Field[i, j]]);
+            }
+            Console.Write("\n");
+        }
+    }
+    static void MyClearField() {
+        int i, j;
+        for (i = 0; i < HEIGHT; i++) {
+            for (j = 0; j < WIDTH; j++) {
+                Field[i, j] = 0;
+            }
+        }
+    }
+    static void MyMakeCollisitonField() {
+        int i, j;
+        for (i = 0; i < HEIGHT; i++) {
+            for (j = 0; j < WIDTH; j++) {
+                CollisionField[i, j] = Stage[i, j];
+                CollisionField[i, 0] = 9;
+                CollisionField[i, 1] = 9;
+                CollisionField[i, 2] = 9;
+                CollisionField[21, j] = 9;
+                CollisionField[22, j] = 9;
+                CollisionField[i, 14] = 9;
+                CollisionField[i, 15] = 9;
+                CollisionField[20, j] = 9;
+                CollisionField[i, 13] = 9;
+            }
+        }
+    }
     static void MyTurnRight() {
         int x, y;
         int turnFlag = 0;
@@ -255,25 +279,6 @@ class Teto {
             TurnPoint--;
         }
     }
-    static void MyFreezeBlock() {
-        int x, y;
-        int freezeFlag = 0;
-        MyMakeCollisitonField();
-        for (y = 0; y < BHEIGHT; y++) {
-            for (x = 0; x < BWIDTH; x++) {
-                if (Block[y, x] != 0) {
-                    if (CollisionField[Fall + y + 1, Side + x] != 0) {
-                        freezeFlag++;
-                    }
-                }
-            }
-        }
-        if (freezeFlag != 0) {
-            MySearchLine();
-            MySaveField();
-            MyInitVar2();
-        }
-    }
     static void MySaveField() {
         int i, j;
         for (i = 0; i < HEIGHT; i++) {
@@ -281,11 +286,6 @@ class Teto {
                 Stage[i, j] = Field[i, j];
             }
         }
-    }
-    static void MyInitVar2() {
-        Fall = 0;
-        Side = 6;
-        BlockFlag = 0;
     }
     static void MyGameOver() {
         int x, y;
