@@ -6,26 +6,63 @@ using System.Windows.Input;
 using System.Windows;
 
 class Teto {
-    static int R;
-    static int TurnPoint;
-    const int SEARCHSTARTY = 19;
-    const int SEARCHSTARTX = 3;
-    static int BlockFlag = 0;
-    static int[] BlockIndexX = { 0, 4, 8, 12 };
-    static int[] BlockIndexY = { 0, 4, 8, 12, 16, 20, 24 };
     const int WIDTH = 16;
-    static int GameOverFlag = 0;
-    static ConsoleKey Input;
-    static int[,] CollisionField = new int[HEIGHT, WIDTH];
     const int HEIGHT = 23;
     const int BWIDTH = 4;
-    static int Fall, Side;
     const int BHEIGHT = BWIDTH;
     const int WAITTIME = 500;
+    const int SEARCHSTARTY = 19;
+    const int SEARCHSTARTX = 3;
     volatile static bool KeyRead = false;
+    static int R;
+    static int TurnPoint;
+    static int BlockFlag = 0;
+    static int GameOverFlag = 0;
+    static int Fall, Side;
+    static ConsoleKey Input;
     static Dictionary<int, char> B = new Dictionary<int, char>();
+    static int[] BlockIndexX = { 0, 4, 8, 12 };
+    static int[] BlockIndexY = { 0, 4, 8, 12, 16, 20, 24 };
+    static int[,] CollisionField = new int[HEIGHT, WIDTH];
     static int[,] Stage = new int[HEIGHT, WIDTH];
     static int[,] Field = new int[HEIGHT, WIDTH];
+    static int[,] Block = new int[BHEIGHT, BWIDTH];
+    static int[,] Blocks = {
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0},
+    {0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+
+    {0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0},
+    {0,1,1,0,0,0,1,0,0,1,0,0,0,1,1,1},
+    {0,0,1,0,1,1,1,0,0,1,1,0,0,1,0,0},
+    {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+
+    {0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0},
+    {0,1,1,0,1,1,1,0,0,0,1,0,0,1,0,0},
+    {0,1,0,0,0,0,1,0,0,1,1,0,0,1,1,1},
+    {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,1,0,1,1,0,0,0,0,1,0,1,1,0,0},
+    {0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0},
+    {0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0},
+
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,1,0,0,0,0,1,1,0,1,0,0,0,0,1,1},
+    {0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0},
+    {0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0},
+
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0},
+    {0,1,1,0,1,1,1,0,1,1,0,0,1,1,1,0},
+    {0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0},
+
+    {0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0},
+    {0,1,0,0,1,1,1,1,0,1,0,0,1,1,1,1},
+    {0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0},
+    {0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0}
+};
     static void Main() {
         Start();
         MyInitVar();
@@ -100,7 +137,7 @@ class Teto {
                 Field[21, j] = 9;
                 Field[22, j] = 9;
                 Field[i, 14] = 9;
-                Field[i,15] = 9;
+                Field[i, 15] = 9;
                 Field[20, j] = 9;
                 Field[i, 13] = 9;
             }
@@ -109,8 +146,8 @@ class Teto {
     static void MyDrawField() {
         int i, j;
         Console.Clear();
-        for (i = 0; i < HEIGHT-2; i++) {
-            for (j = 2; j < WIDTH-2; j++) {
+        for (i = 0; i < HEIGHT - 2; i++) {
+            for (j = 2; j < WIDTH - 2; j++) {
                 Console.Write(B[Field[i, j]]);
             }
             Console.Write("\n");
@@ -144,14 +181,12 @@ class Teto {
     static void MyHandler(object userState) {
         Input = Console.ReadKey().Key;
         KeyRead = true;
-        // Thread.Sleep(WAITTIME);
     }
     static void InitInput() {
         KeyRead = false;
     }
     static void MyGetKey() {
         int x, y;
-
         int SideFlag = 0;
         MyMakeCollisitonField();
 
@@ -185,10 +220,7 @@ class Teto {
                 Side++;
             }
         }
-        if (Input == ConsoleKey.Z&&KeyRead) {
-            MyTurnLeft();
-        }
-        if (Input == ConsoleKey.X&&KeyRead) {
+        if (Input == ConsoleKey.X && KeyRead) {
             MyTurnRight();
         }
     }
@@ -223,9 +255,6 @@ class Teto {
             TurnPoint--;
         }
     }
-    static void MyTurnLeft() {
-
-    }
     static void MyFreezeBlock() {
         int x, y;
         int freezeFlag = 0;
@@ -243,7 +272,6 @@ class Teto {
             MySearchLine();
             MySaveField();
             MyInitVar2();
-            
         }
     }
     static void MySaveField() {
@@ -266,7 +294,7 @@ class Teto {
             for (x = 0; x < BWIDTH; x++) {
                 if (Block[y, x] != 0) {
                     if (CollisionField[Fall + y, Side + x] != 0) {
-                        GameOverFlag++; 
+                        GameOverFlag++;
                     }
                 }
             }
@@ -316,41 +344,4 @@ class Teto {
             }
         }
     }
-    static int[,] Block = new int[BHEIGHT, BWIDTH];
-    static int[,] Blocks = {
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0},
-    {0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-
-    {0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0},
-    {0,1,1,0,0,0,1,0,0,1,0,0,0,1,1,1},
-    {0,0,1,0,1,1,1,0,0,1,1,0,0,1,0,0},
-    {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-
-    {0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0},
-    {0,1,1,0,1,1,1,0,0,0,1,0,0,1,0,0},
-    {0,1,0,0,0,0,1,0,0,1,1,0,0,1,1,1},
-    {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,1,0,1,1,0,0,0,0,1,0,1,1,0,0},
-    {0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0},
-    {0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0},
-
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,1,0,0,0,0,1,1,0,1,0,0,0,0,1,1},
-    {0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0},
-    {0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0},
-
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0},
-    {0,1,1,0,1,1,1,0,1,1,0,0,1,1,1,0},
-    {0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0},
-
-    {0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0},
-    {0,1,0,0,1,1,1,1,0,1,0,0,1,1,1,1},
-    {0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0},
-    {0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0}
-};
 }
