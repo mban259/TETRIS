@@ -212,13 +212,18 @@ class Teto {
     }
     static void MyDrawField() {
         int i, j;
+        string s = "";
         Console.Clear();
+
         for (i = 0; i < HEIGHT - 2; i++) {
             for (j = 2; j < WIDTH - 2; j++) {
-                Console.Write(B[Field[i, j]]);
+                s = s + B[Field[i, j]];
+                //Console.Write(B[Field[i, j]]);
             }
-            Console.Write("\n");
+            //Console.Write("\n");
+            s = s + "\n";
         }
+        Console.Write(s);
     }
     static void MyClearField() {
         int i, j;
