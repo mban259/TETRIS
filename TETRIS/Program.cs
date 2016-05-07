@@ -156,7 +156,7 @@ class Teto {
         }
     }
     static void MyHandler(object userState) {
-        Input = Console.ReadKey().Key;
+        Input = Console.ReadKey(true).Key;
         KeyRead = true;
     }
     static void InitInput() {
