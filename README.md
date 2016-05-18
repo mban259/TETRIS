@@ -8,4 +8,4 @@
 * X　回転
 
 ## ダウンロード
-<https://drive.google.com/folderview?id=0BxlBriCp6UA5TERYUC00ZW4tYUU&usp=drive_web>
+<https://drive.google.com/open?id=0BxlBriCp6UA5UldaU2JzTjdZcUU>
