@@ -68,7 +68,7 @@ class Teto {
             if (GameOverFlag == 0) {
                 MyMakeBlock();
                 MyGameOver();
-                ThreadPool.QueueUserWorkItem(new WaitCallback(MyHandler), null);
+                Timer t = new Timer(MyHandler, null, 250, 250);
                 MyGetKey();
                 InitInput();
                 MyMakeField();
