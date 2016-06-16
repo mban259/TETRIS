@@ -7,7 +7,7 @@ class Teto {
     const int HEIGHT = 23;
     const int BWIDTH = 4;
     const int BHEIGHT = BWIDTH;
-    const int WAITTIME = 500;
+    const int WAITTIME = 300;
     const int SEARCHSTARTY = 19;
     const int SEARCHSTARTX = 3;
     volatile static bool KeyRead = false;
@@ -68,7 +68,7 @@ class Teto {
             if (GameOverFlag == 0) {
                 MyMakeBlock();
                 MyGameOver();
-                Timer t = new Timer(MyHandler, null, 250, 250);
+                Timer t = new Timer(MyHandler, null, WAITTIME/2, WAITTIME/2);
                 MyGetKey();
                 InitInput();
                 MyMakeField();
@@ -153,6 +153,9 @@ class Teto {
         }
         if (Input == ConsoleKey.X && KeyRead) {
             MyTurnRight();
+        }
+        if (Input == ConsoleKey.Z && KeyRead) {
+            MyTurnLeft();
         }
     }
     static void MyHandler(object userState) {
@@ -279,6 +282,37 @@ class Teto {
         }
         else {
             TurnPoint--;
+        }
+    }
+    static void MyTurnLeft() {
+        int x, y;
+        int turnFlag = 0;
+        int[,] turnBlock = new int[4, 4];
+        TurnPoint+=3;
+        MyMakeCollisitonField();
+        for (y = 0; y < BHEIGHT; y++) {
+            for (x = 0; x < BWIDTH; x++) {
+                turnBlock[y, x] = Blocks[BlockIndexY[R] + y, BlockIndexX[TurnPoint % 4] + x];
+            }
+        }
+        for (y = 0; y < BHEIGHT; y++) {
+            for (x = 0; x < BWIDTH; x++) {
+                if (turnBlock[y, x] != 0) {
+                    if (CollisionField[Fall + y, Side + x] != 0) {
+                        turnFlag++;
+                    }
+                }
+            }
+        }
+        if (turnFlag == 0) {
+            for (y = 0; y < BHEIGHT; y++) {
+                for (x = 0; x < BWIDTH; x++) {
+                    Block[y, x] = turnBlock[y, x];
+                }
+            }
+        }
+        else {
+            TurnPoint++;
         }
     }
     static void MySaveField() {
